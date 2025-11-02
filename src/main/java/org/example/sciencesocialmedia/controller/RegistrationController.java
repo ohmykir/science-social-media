@@ -40,7 +40,7 @@ public class RegistrationController {
         userForm.setRoles(role);
 
         if (!userService.saveUser(userForm)) {
-            model.addAttribute("usernameError","Пользователь с таким именет уже существует");
+            model.addAttribute("usernameError","Пользователь с таким именем уже существует");
             return "registration";
         }
 

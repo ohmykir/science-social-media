@@ -106,7 +106,7 @@ public class UserService implements UserDetailsService {
     }
 
     private String getUploadDir() {
-        return System.getProperty("user.home") + File.separator + "scinet-uploads" + File.separator + "profile-photos";
+        return System.getProperty("user.home") + File.separator + "mindlink-uploads" + File.separator + "profile-photos";
     }
 
     private String saveProfilePhoto(MultipartFile photo, String userId) throws IOException {

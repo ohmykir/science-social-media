@@ -61,14 +61,12 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
-    // Универсальное закрытие всех модалей по крестику
     document.querySelectorAll('.close').forEach(closeBtn => {
         closeBtn.addEventListener('click', function() {
             this.closest('.modal').classList.remove('show');
         });
     });
 
-    // Закрытие по клику на фон
     document.querySelectorAll('.modal').forEach(modal => {
         modal.addEventListener('click', function(e) {
             if (e.target === this) {
@@ -77,14 +75,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Открытие окна добавления статей
     if (showUploadFormBtn) {
         showUploadFormBtn.addEventListener('click', function() {
             uploadFormContainer.classList.add('show');
         });
     }
 
-    // Закрытие окна добавления статей по кнопке
     if (closeUploadFormBtn) {
         closeUploadFormBtn.addEventListener('click', function() {
             uploadFormContainer.classList.remove('show');

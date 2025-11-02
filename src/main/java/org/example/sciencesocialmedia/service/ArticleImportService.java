@@ -77,11 +77,11 @@ public class ArticleImportService {
 
         String title = getFieldAsString(entry, BibTeXEntry.KEY_TITLE);
         if (title == null || title.isBlank()) {
-            throw new IllegalArgumentException("Title is required");
+            throw new IllegalArgumentException("Название обязательно");
         }
 
         if (articleRepository.existsByAuthorIdAndTitle(authorId, title)) {
-            throw new IllegalArgumentException("Article with this title already exists");
+            throw new IllegalArgumentException("Статья с этим названием уже есть");
         }
 
         article.setTitle(title);

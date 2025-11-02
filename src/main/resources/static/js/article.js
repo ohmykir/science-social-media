@@ -4,14 +4,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const pdfUploadBtn = document.getElementById('show-pdf-upload');
     const pdfUploadModal = document.getElementById('pdf-upload-modal');
 
-    // Универсальное закрытие модалей по крестику
     document.querySelectorAll('.close').forEach(closeBtn => {
         closeBtn.addEventListener('click', function() {
             this.closest('.modal').classList.remove('show');
         });
     });
 
-    // Закрытие по клику на фон
     document.querySelectorAll('.modal').forEach(modal => {
         modal.addEventListener('click', function(e) {
             if (e.target === this) {
@@ -20,7 +18,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Открытие модали PDF
     if (pdfUploadBtn && pdfUploadModal) {
         pdfUploadBtn.addEventListener('click', () => {
             pdfUploadModal.classList.add('show');

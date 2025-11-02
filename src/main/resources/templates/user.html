@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${userProfile.user.firstName + ' ' + userProfile.user.lastName + ' - SciNet'}">Профиль пользователя</title>
+    <title th:text="${userProfile.user.firstName + ' ' + userProfile.user.lastName + ' - MindLink'}">Профиль пользователя</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/styles/user-profile.css}">
     <link rel="stylesheet" th:href="@{/styles/common.css}">
@@ -14,7 +14,7 @@
     <div class="nav-container">
         <a th:href="@{/}" class="logo">
             <i class="fas fa-flask-vial"></i>
-            SciNet
+            MindLink
         </a>
         <div class="nav-links">
             <a th:href="@{/}" class="nav-link">Главная</a>
@@ -83,7 +83,6 @@
     </div>
 
 
-    <!-- Flash messages -->
     <div th:if="${success}" class="alert alert-success">
         <i class="fas fa-check-circle"></i>
         <span th:text="${success}"></span>
@@ -164,7 +163,6 @@
                 </div>
             </div>
 
-            <!-- Modal для списка -->
             <div id="users-modal" class="modal">
                 <div class="modal-content">
                     <button class="close">&times;</button>
