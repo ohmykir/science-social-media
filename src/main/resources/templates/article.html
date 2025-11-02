@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${article.title}">Статья</title>
+    <title th:text="${article.article.title}">Статья</title>
     <link rel="stylesheet" th:href="@{/styles/article.css}">
     <link rel="stylesheet" th:href="@{/styles/common.css}">
 </head>
@@ -27,46 +27,74 @@
 
 <div class="container">
     <div class="article-header">
-        <h1 class="article-title" th:text="${article.title}">Название статьи</h1>
+        <h1 class="article-title" th:text="${article.article.title}">Название статьи</h1>
 
         <div class="article-meta">
             <div class="author-info">
                 <span>Автор: </span>
-                <a th:href="@{/user(id=${article.authorId})}"
-                   th:text="${article.author}">Автор</a>
+                <a th:href="@{/user(id=${article.article.authorId})}"
+                   th:text="${article.article.author}">Автор</a>
             </div>
             <div class="publication-info">
-                <span th:text="${article.journal}">Журнал</span>
-                <span th:if="${article.year}" th:text="', ' + ${article.year}">2023</span>
-                <span th:if="${article.pages}" th:text="', стр. ' + ${article.pages}">стр. 1-10</span>
+                <span th:text="${article.article.journal}">Журнал</span>
+                <span th:if="${article.article.year}" th:text="', ' + ${article.article.year}">2023</span>
+                <span th:if="${article.article.pages}" th:text="', стр. ' + ${article.article.pages}">стр. 1-10</span>
             </div>
-            <div class="published-date" th:if="${article.published}">
+            <div class="published-date" th:if="${article.article.published}">
                 <span>Опубликовано: </span>
-                <span th:text="${#temporals.format(article.published, 'dd.MM.yyyy HH:mm')}">01.01.2023 12:00</span>
+                <span th:text="${#temporals.format(article.article.published, 'dd.MM.yyyy HH:mm')}">01.01.2023 12:00</span>
             </div>
         </div>
 
         <div class="article-actions">
-            <button class="action-btn like-btn" th:attr="data-article-id=${article.id}" th:classappend="${userLiked} ? 'liked' : ''">
+            <button class="action-btn like-btn"
+                    th:attr="data-article-id=${article.article.id}"
+                    th:classappend="${article.likedByCurrentUser} ? 'liked' : ''">
                 <span class="icon">♥</span>
-                <span class="count" th:text="${article.likes?.size() ?: 0}">0</span>
-                <span class="text" th:text="Нравится">Нравится</span>
+                <span class="count" th:text="${article.likeCount}">0</span>
+                <span class="text">Нравится</span>
             </button>
+        </div>
+
+        <div class="article-manage" th:if="${isAuthenticated and currentUserId == article.article.authorId}">
+            <button id="show-pdf-upload" class="btn-secondary">📄 Загрузить контент из PDF</button>
+
+            <form th:action="@{/article/{id}/delete(id=${article.article.id})}"
+                  method="post"
+                  style="display: inline;">
+                <button type="submit" class="btn-danger"
+                        onclick="return confirm('Вы уверены? Это действие необратимо!');">
+                    🗑️ Удалить статью
+                </button>
+            </form>
+
+            <div id="pdf-upload-modal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h3>Загрузить контент из PDF</h3>
+                    <form th:action="@{/article/{id}/upload-pdf(id=${article.article.id})}"
+                          method="post"
+                          enctype="multipart/form-data">
+                        <input type="file" name="file" accept=".pdf" required>
+                        <button type="submit" class="btn-primary">Загрузить</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="article-content">
-        <div class="content-text" th:utext="${article.content}">
+        <div class="content-text" th:utext="${article.article.content}">
             Содержание статьи будет здесь...
         </div>
     </div>
 
     <div class="comments-section">
-        <h3>Комментарии (<span th:text="${comments?.size() ?: 0}">0</span>)</h3>
+        <h3>Комментарии (<span th:text="${article.comments.size()}">0</span>)</h3>
 
         <div class="comment-form" th:if="${isAuthenticated}">
-            <form id="add-comment-form" th:action="@{/api/comments}" method="post">
-                <input type="hidden" name="articleId" th:value="${article.id}">
+            <form id="add-comment-form" method="post">
+                <input type="hidden" name="articleId" th:value="${article.article.id}">
                 <textarea name="text" placeholder="Напишите комментарий..." rows="3" required></textarea>
                 <button type="submit" class="btn-primary">Отправить</button>
             </form>
@@ -76,19 +104,19 @@
             <p>Чтобы оставить комментарий, <a th:href="@{/login}">войдите</a> в систему.</p>
         </div>
 
-        <div class="comments-list" th:if="${comments != null and comments.size() > 0}">
-            <div class="comment-item" th:each="comment : ${comments}">
+        <div class="comments-list" th:if="${article.comments != null and article.comments.size() > 0}">
+            <div class="comment-item" th:each="comment : ${article.comments}">
                 <div class="comment-header">
                     <a th:href="@{/user(id=${comment.commentatorId})}" class="comment-author">
                         <span th:text="${comment.commentatorUsername}">Имя пользователя</span>
                     </a>
-                    <span class="comment-date" th:text="${#temporals.format(comment.date, 'dd.MM.yyyy HH:mm')}">01.01.2023 12:00</span>
+                    <span class="comment-date" th:text="${#temporals.format(comment.createdAt, 'dd.MM.yyyy HH:mm')}">01.01.2023 12:00</span>
                 </div>
                 <div class="comment-text" th:text="${comment.text}">Текст комментария</div>
             </div>
         </div>
 
-        <div class="no-comments" th:if="${comments == null or comments.size() == 0}">
+        <div class="no-comments" th:if="${article.comments == null or article.comments.size() == 0}">
             <p>Пока нет комментариев. Будьте первым!</p>
         </div>
     </div>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${user.firstName + ' ' + user.lastName + ' - Профиль'}">Профиль пользователя</title>
+    <title th:text="${userProfile.user.firstName + ' ' + userProfile.user.lastName + ' - Профиль'}">Профиль пользователя</title>
     <link rel="stylesheet" th:href="@{/styles/user-profile.css}">
     <link rel="stylesheet" th:href="@{/styles/common.css}">
 </head>
@@ -28,16 +28,25 @@
 <div class="container">
     <div class="user-profile">
         <div class="user-avatar">
-            <img th:src="@{/images/default-avatar.png}" alt="Аватар пользователя">
+            <img th:if="${userProfile.user.profilePhotoPath}"
+                 th:src="@{${userProfile.user.profilePhotoPath}}"
+                 alt="Аватар пользователя">
+            <img th:unless="${userProfile.user.profilePhotoPath}"
+                 th:src="@{/images/default-avatar.png}"
+                 alt="Аватар по умолчанию">
         </div>
         <div class="user-info">
-            <h1 class="username" th:text="${user.username}">username</h1>
-            <h2 class="full-name" th:text="${user.firstName + ' ' + user.lastName}">Имя Фамилия</h2>
-            <p class="bio" th:text="${user.bio}">Биография пользователя</p>
+            <h1 class="username" th:text="${userProfile.user.username}">username</h1>
+            <h2 class="full-name" th:text="${userProfile.user.firstName + ' ' + userProfile.user.lastName}">Имя Фамилия</h2>
+            <p class="bio" th:text="${userProfile.user.bio}">Биография пользователя</p>
         </div>
 
-        <div th:if="${isOwner}" class="profile-actions">
-            <button id="show-upload-form" class="btn-primary">+ Добавить статью</button>
+        <div class="profile-actions">
+            <button th:if="${isOwner}" id="show-upload-form" class="btn-primary">+ Добавить статью</button>
+            <a th:if="${isOwner}" th:href="@{/user/edit}" class="btn-secondary">✏️ Редактировать профиль</a>
+            <button th:unless="${isOwner}" class="subscribe-btn"
+                    th:attr="data-user-id=${userProfile.user.id}"
+                    th:text="${userProfile.subscribed} ? 'Отписаться' : 'Подписаться'"></button>
         </div>
     </div>
 
@@ -45,10 +54,10 @@
         <div class="upload-form-wrapper">
             <button id="close-upload-form" class="close-btn">&times;</button>
             <h3>Загрузка статей из BibTeX</h3>
-            <form th:action="@{/api/import/bibtex}" method="post" enctype="multipart/form-data" id="bibtex-upload-form">
+            <form th:action="@{/import/bibtex}" method="post" enctype="multipart/form-data" id="bibtex-upload-form">
                 <div class="form-group">
                     <label for="file">Выберите BibTeX файл:</label>
-                    <input type="file" id="file" name="file" required>
+                    <input type="file" id="file" name="file" accept=".bib" required>
                 </div>
                 <button type="submit" class="btn-primary">Загрузить</button>
             </form>
@@ -56,31 +65,46 @@
         </div>
     </div>
 
+    <!-- Flash messages -->
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${warnings}" class="alert alert-warning">
+        <div th:each="warning : ${warnings}" th:text="${warning}"></div>
+    </div>
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
 
     <div class="content-wrapper">
         <div class="articles-section">
-            <h3>Статьи <span class="articles-count" th:text="'(' + ${userArticles.size()} + ')'">0</span></h3>
+            <div class="articles-header">
+                <h3>Статьи <span class="articles-count" th:text="'(' + ${userProfile.articles.size()} + ')'">0</span></h3>
+                <select id="sort-selector" class="sort-select">
+                    <option value="date" th:selected="${currentSort == 'date'}">По дате</option>
+                    <option value="title" th:selected="${currentSort == 'title'}">По названию</option>
+                    <option value="likes" th:selected="${currentSort == 'likes'}">По лайкам</option>
+                    <option value="comments" th:selected="${currentSort == 'comments'}">По комментариям</option>
+                    <option value="year" th:selected="${currentSort == 'year'}">По году</option>
+                </select>
+            </div>
 
             <div class="articles-list" id="articles-container">
-                <div class="article-item" th:each="article : ${userArticles}">
+                <div class="article-item" th:each="article : ${userProfile.articles}">
                     <div class="article-content">
                         <h4 class="article-title">
-                            <a th:href="@{/article(id=${article.id})}" th:text="${article.title}">Название статьи</a>
+                            <a th:href="@{/article(id=${article.article.id})}" th:text="${article.article.title}">Название статьи</a>
                         </h4>
                         <div class="article-meta">
-                            <span class="article-journal" th:text="${article.journal}">Журнал</span>
-                            <span class="article-year" th:text="${article.year}">2023</span>
+                            <span class="article-journal" th:text="${article.article.journal}">Журнал</span>
+                            <span class="article-year" th:text="${article.article.year}">2023</span>
                         </div>
-                        <div class="article-authors" th:text="${article.author}">Авторы</div>
+                        <div class="article-authors" th:text="${article.article.author}">Авторы</div>
                     </div>
                     <div class="article-actions">
                         <div class="action-item">
                             <span class="icon like-icon">♥</span>
-                            <span class="count" th:text="${article.likes?.size() ?: 0}">0</span>
+                            <span class="count" th:text="${article.likeCount}">0</span>
                         </div>
                         <div class="action-item">
                             <span class="icon comment-icon">💬</span>
-                            <span class="count" th:text="${article.comments?.size() ?: 0}">0</span>
+                            <span class="count" th:text="${article.commentCount}">0</span>
                         </div>
                     </div>
                 </div>
@@ -95,25 +119,22 @@
         <div class="sidebar">
             <div class="stats-card">
                 <h4>Статистика</h4>
-                <div class="stat-item">
+                <div class="stat-item clickable" id="show-subscribers">
                     <span class="stat-label">Подписчиков:</span>
-                    <span class="stat-value" th:text="${user.subscribers?.size() ?: 0}">0</span>
+                    <span class="stat-value" th:text="${userProfile.subscriberCount}">0</span>
                 </div>
-                <div class="stat-item">
+                <div class="stat-item clickable" id="show-subscriptions">
                     <span class="stat-label">Подписок:</span>
-                    <span class="stat-value" th:text="${user.subscriptions?.size() ?: 0}">0</span>
+                    <span class="stat-value" th:text="${userProfile.subscriptionCount}">0</span>
                 </div>
             </div>
 
-            <div class="subscriptions-card" th:if="${user.subscriptions?.size() > 0}">
-                <h4>Подписки</h4>
-                <div class="subscription-list">
-                    <div class="subscription-item" th:each="subscription : ${user.subscriptions}">
-                        <a th:href="@{/user(id=${subscription.id})}"
-                           th:text="${subscription.firstName + ' ' + subscription.lastName}">
-                            Имя пользователя
-                        </a>
-                    </div>
+            <!-- Modal для списка -->
+            <div id="users-modal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h3 id="modal-title"></h3>
+                    <div id="users-list"></div>
                 </div>
             </div>
         </div>

@@ -9,7 +9,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LikeId implements Serializable {
-    private String userId;
+public class ArticleTagId implements Serializable {
     private String articleId;
+    private String tagId;
 }

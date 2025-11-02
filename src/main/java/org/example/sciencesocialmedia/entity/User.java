@@ -4,12 +4,13 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Data
 @Entity(name = "users")
@@ -21,12 +22,21 @@ public class User implements UserDetails {
     @EqualsAndHashCode.Include
     private String id;
 
+    @Column(unique = true, nullable = false)
     private String username;
+
     private String firstName;
     private String lastName;
+
+    @Column(unique = true, nullable = false)
     private String email;
+
     private String password;
+
+    @Column(columnDefinition = "TEXT")
     private String bio;
+
+    private String profilePhotoPath;
 
     @Transient
     private String passwordConfirm;
@@ -37,23 +47,12 @@ public class User implements UserDetails {
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     private Set<String> roles = new HashSet<>();
 
-    @ManyToMany
-    private Set<User> subscribers;
-
-    @ManyToMany
-    private Set<User> subscriptions;
-
-    @OneToMany(mappedBy = "authorId")
-    private Set<Article> articles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (roles.contains("USER")) {
-            return AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_USER");
-        } else if (roles.contains("ADMIN")) {
-            return AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_ADMIN");
-        }
-        return AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_USER");
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -74,10 +73,5 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return enabled;
-    }
-
-    @Override
-    public String toString() {
-        return "User [id=" + id + ", username=" + username + ", firstName=" + firstName + ", lastName=" + lastName;
     }
 }

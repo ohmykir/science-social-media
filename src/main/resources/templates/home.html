@@ -1,84 +1,84 @@
 <!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Главная - Научная социальная сеть</title>
-  <link rel="stylesheet" th:href="@{/styles/home.css}">
-  <link rel="stylesheet" th:href="@{/styles/common.css}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная - Научная социальная сеть</title>
+    <link rel="stylesheet" th:href="@{/styles/home.css}">
+    <link rel="stylesheet" th:href="@{/styles/common.css}">
 </head>
 <body>
 <nav class="navbar">
-  <div class="nav-container">
-    <a th:href="@{/}" class="logo">🔬 SciNet</a>
-    <div class="nav-links">
-      <a th:href="@{/}" class="nav-link">Главная</a>
-      <div sec:authorize="isAuthenticated()">
-        <a th:href="@{/user(id=${currentUserId})}" class="nav-link">Мой профиль</a>
-        <a th:href="@{/logout}" class="nav-link btn-logout">Выйти</a>
-      </div>
-      <div sec:authorize="!isAuthenticated()">
-        <a th:href="@{/login}" class="nav-link btn-login">Войти</a>
-      </div>
+    <div class="nav-container">
+        <a th:href="@{/}" class="logo">🔬 SciNet</a>
+        <div class="nav-links">
+            <a th:href="@{/}" class="nav-link">Главная</a>
+            <div sec:authorize="isAuthenticated()">
+                <a th:href="@{/user(id=${currentUserId})}" class="nav-link">Мой профиль</a>
+                <a th:href="@{/logout}" class="nav-link btn-logout">Выйти</a>
+            </div>
+            <div sec:authorize="!isAuthenticated()">
+                <a th:href="@{/login}" class="nav-link btn-login">Войти</a>
+            </div>
+        </div>
     </div>
-  </div>
 </nav>
 
 <div class="container">
-  <div class="hero-section">
-    <h1>Добро пожаловать в SciNet</h1>
-    <p>Делитесь своими исследованиями, обсуждайте научные статьи и находите единомышленников</p>
-  </div>
-
-  <section class="top-section">
-    <h2>🔥 Самые популярные статьи</h2>
-    <div class="articles-grid">
-      <div class="article-card" th:each="dto : ${topLikedArticles}">
-        <h3 class="article-card-title">
-          <a th:href="@{/article(id=${dto.article.id})}" th:text="${dto.article.title}">Название статьи</a>
-        </h3>
-        <div class="article-card-meta">
-          <span class="article-author" th:text="${dto.article.author}">Автор</span>
-          <span class="article-journal" th:if="${dto.article.journal}" th:text="', ' + ${dto.article.journal}">Журнал</span>
-        </div>
-        <div class="article-card-stats">
-                        <span class="stat-item">
-                            <span class="icon">♥</span>
-                            <span th:text="${dto.likeCount}">0</span>
-                        </span>
-          <span class="stat-item">
-                            <span class="icon">💬</span>
-                            <span th:text="${dto.commentCount}">0</span>
-                        </span>
-        </div>
-      </div>
+    <div class="hero-section">
+        <h1>Добро пожаловать в SciNet</h1>
+        <p>Делитесь своими исследованиями, обсуждайте научные статьи и находите единомышленников</p>
     </div>
-  </section>
 
-  <section class="top-section">
-    <h2>💬 Самые обсуждаемые статьи</h2>
-    <div class="articles-grid">
-      <div class="article-card" th:each="dto : ${topCommentedArticles}">
-        <h3 class="article-card-title">
-          <a th:href="@{/article(id=${dto.article.id})}" th:text="${dto.article.title}">Название статьи</a>
-        </h3>
-        <div class="article-card-meta">
-          <span class="article-author" th:text="${dto.article.author}">Автор</span>
-          <span class="article-journal" th:if="${dto.article.journal}" th:text="', ' + ${dto.article.journal}">Журнал</span>
-        </div>
-        <div class="article-card-stats">
-                        <span class="stat-item">
-                            <span class="icon">♥</span>
-                            <span th:text="${dto.likeCount}">0</span>
-                        </span>
+    <section class="top-section">
+        <h2>🔥 Самые популярные статьи</h2>
+        <div class="articles-grid">
+            <div class="article-card" th:each="dto : ${topLikedArticles}">
+                <h3 class="article-card-title">
+                    <a th:href="@{/article(id=${dto.article.id})}" th:text="${dto.article.title}">Название статьи</a>
+                </h3>
+                <div class="article-card-meta">
+                    <span class="article-author" th:text="${dto.article.author}">Автор</span>
+                    <span class="article-journal" th:if="${dto.article.journal}" th:text="', ' + ${dto.article.journal}">Журнал</span>
+                </div>
+                <div class="article-card-stats">
           <span class="stat-item">
-                            <span class="icon">💬</span>
-                            <span th:text="${dto.commentCount}">0</span>
-                        </span>
+            <span class="icon">♥</span>
+            <span th:text="${dto.likeCount}">0</span>
+          </span>
+                    <span class="stat-item">
+            <span class="icon">💬</span>
+            <span th:text="${dto.commentCount}">0</span>
+          </span>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  </section>
+    </section>
+
+    <section class="top-section">
+        <h2>💬 Самые обсуждаемые статьи</h2>
+        <div class="articles-grid">
+            <div class="article-card" th:each="dto : ${topCommentedArticles}">
+                <h3 class="article-card-title">
+                    <a th:href="@{/article(id=${dto.article.id})}" th:text="${dto.article.title}">Название статьи</a>
+                </h3>
+                <div class="article-card-meta">
+                    <span class="article-author" th:text="${dto.article.author}">Автор</span>
+                    <span class="article-journal" th:if="${dto.article.journal}" th:text="', ' + ${dto.article.journal}">Журнал</span>
+                </div>
+                <div class="article-card-stats">
+          <span class="stat-item">
+            <span class="icon">♥</span>
+            <span th:text="${dto.likeCount}">0</span>
+          </span>
+                    <span class="stat-item">
+            <span class="icon">💬</span>
+            <span th:text="${dto.commentCount}">0</span>
+          </span>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
 </body>
 </html>

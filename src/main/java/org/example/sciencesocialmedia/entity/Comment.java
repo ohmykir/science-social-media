@@ -3,7 +3,6 @@ package org.example.sciencesocialmedia.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 import java.time.LocalDateTime;
 
@@ -16,13 +15,10 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.UUID)
     @EqualsAndHashCode.Include
     private String id;
+
     private String articleId;
     private String commentatorId;
-    private String commentatorUsername;
     private String text;
-    private LocalDateTime date;
+    private LocalDateTime createdAt;
 
-    @ManyToOne
-    @JoinColumn(name = "articleId", insertable = false, updatable = false)
-    private Article article;
 }

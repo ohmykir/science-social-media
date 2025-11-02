@@ -1,11 +1,15 @@
 package org.example.sciencesocialmedia.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.Data;
 
-@Entity
+@Entity(name = "tags")
+@Data
 public class Tag {
     @Id
-    private int id;
-    private String tag;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(unique = true, nullable = false)
+    private String name;
 }

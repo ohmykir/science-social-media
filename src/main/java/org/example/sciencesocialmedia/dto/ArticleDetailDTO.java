@@ -1,15 +1,14 @@
 package org.example.sciencesocialmedia.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.example.sciencesocialmedia.entity.Article;
 
+import java.util.List;
+
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class ArticleViewDTO {
+public class ArticleDetailDTO {
     private Article article;
     private int likeCount;
-    private int commentCount;
+    private boolean likedByCurrentUser;
+    private List<CommentDTO> comments;
 }

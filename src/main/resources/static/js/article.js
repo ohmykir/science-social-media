@@ -1,68 +1,62 @@
 document.addEventListener('DOMContentLoaded', function() {
     const likeBtn = document.querySelector('.like-btn');
+    const commentForm = document.getElementById('add-comment-form');
+    const pdfUploadBtn = document.getElementById('show-pdf-upload');
+    const pdfUploadModal = document.getElementById('pdf-upload-modal');
+
+    if (pdfUploadBtn && pdfUploadModal) {
+        pdfUploadBtn.addEventListener('click', () => {
+            pdfUploadModal.style.display = 'block';
+        });
+
+        pdfUploadModal.querySelector('.close').addEventListener('click', () => {
+            pdfUploadModal.style.display = 'none';
+        });
+    }
 
     if (likeBtn) {
         likeBtn.addEventListener('click', function() {
             const articleId = this.getAttribute('data-article-id');
-            const button = this;
 
             fetch('/api/likes', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify({ articleId: articleId })
             })
-                .then(function(response) { return response.json(); })
-                .then(function(data) {
-                    const countSpan = button.querySelector('.count');
-                    countSpan.textContent = data.likeCount;
-
-                    const textSpan = button.querySelector('.text');
-                    if (data.liked) {
-                        button.classList.add('liked');
-                        textSpan.textContent = 'Нравится';
-                    } else {
-                        button.classList.remove('liked');
-                        textSpan.textContent = 'Нравится';
-                    }
+                .then(response => response.json())
+                .then(data => {
+                    likeBtn.classList.toggle('liked', data.liked);
+                    document.querySelector('.like-btn .count').textContent = data.likeCount;
                 })
-                .catch(function(error) {
-                    console.error('Error:', error);
-                });
+                .catch(error => console.error('Error:', error));
         });
     }
-
-
-
-    const commentForm = document.getElementById('add-comment-form');
 
     if (commentForm) {
         commentForm.addEventListener('submit', function(e) {
             e.preventDefault();
 
-            const formData = new FormData(this);
-            const data = {
-                articleId: formData.get('articleId'),
-                text: formData.get('text')
-            };
+            const articleId = this.querySelector('input[name="articleId"]').value;
+            const text = this.querySelector('textarea[name="text"]').value;
 
             fetch('/api/comments', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(data)
+                body: JSON.stringify({
+                    articleId: articleId,
+                    text: text
+                })
             })
                 .then(response => {
                     if (response.ok) {
                         location.reload();
-                    } else {
-                        alert('Ошибка при добавлении комментария');
                     }
                 })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Ошибка при добавлении комментария');
-                });
+                .catch(error => console.error('Error:', error));
         });
     }
 });
