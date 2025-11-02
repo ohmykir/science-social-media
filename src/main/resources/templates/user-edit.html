@@ -2,14 +2,19 @@
 <html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Редактировать профиль</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактировать профиль - SciNet</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/styles/common.css}">
 </head>
 <body>
 
 <nav class="navbar">
     <div class="nav-container">
-        <a th:href="@{/}" class="logo">🔬 SciNet</a>
+        <a th:href="@{/}" class="logo">
+            <i class="fas fa-flask-vial"></i>
+            SciNet
+        </a>
         <div class="nav-links">
             <a th:href="@{/}" class="nav-link">Главная</a>
             <a th:href="@{/user(id=${user.id})}" class="nav-link">Мой профиль</a>
@@ -18,17 +23,26 @@
     </div>
 </nav>
 
-<div class="container">
-    <div class="edit-profile-form">
-        <h1>Редактировать профиль</h1>
+<div class="container" style="max-width: 600px; margin-top: 40px;">
+    <div style="background: white; padding: 32px; border-radius: 12px; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); border: 1px solid #e5e7eb;">
+        <h1 style="font-size: 28px; font-weight: 700; margin-bottom: 24px; color: #111827;">
+            <i class="fas fa-user-circle"></i>
+            Редактировать профиль
+        </h1>
 
-        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
-        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+        <div th:if="${success}" class="alert alert-success">
+            <i class="fas fa-check-circle"></i>
+            <span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" class="alert alert-error">
+            <i class="fas fa-times-circle"></i>
+            <span th:text="${error}"></span>
+        </div>
 
         <form th:action="@{/user/edit}" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label>Логин (нельзя изменить)</label>
-                <input type="text" th:value="${user.username}" disabled>
+                <input type="text" th:value="${user.username}" disabled style="background-color: #f3f4f6; cursor: not-allowed;">
             </div>
 
             <div class="form-group">
@@ -49,21 +63,30 @@
             <div class="form-group">
                 <label for="bio">Биография</label>
                 <textarea id="bio" name="bio" rows="4" th:text="${user.bio}"></textarea>
+                <small style="color: #6b7280;">Расскажите о себе немного</small>
             </div>
 
             <div class="form-group">
                 <label for="photo">Фото профиля</label>
                 <input type="file" id="photo" name="photo" accept="image/*">
-                <small>Максимальный размер: 10MB</small>
+                <small style="color: #6b7280;">Максимальный размер: 10MB. Форматы: JPG, PNG</small>
 
-                <div th:if="${user.profilePhotoPath}" class="current-photo">
-                    <p>Текущее фото:</p>
-                    <img th:src="@{${user.profilePhotoPath}}" alt="Текущее фото" style="max-width: 200px;">
+                <div th:if="${user.profilePhotoPath}" style="margin-top: 16px;">
+                    <p style="color: #6b7280; font-size: 14px; margin-bottom: 8px;">Текущее фото:</p>
+                    <img th:src="@{${user.profilePhotoPath}}" alt="Текущее фото" style="max-width: 200px; border-radius: 8px;">
                 </div>
             </div>
 
-            <button type="submit" class="btn-primary">Сохранить изменения</button>
-            <a th:href="@{/user(id=${user.id})}" class="btn-secondary">Отмена</a>
+            <div style="display: flex; gap: 12px; margin-top: 32px;">
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-save"></i>
+                    Сохранить изменения
+                </button>
+                <a th:href="@{/user(id=${user.id})}" class="btn-secondary" style="display: inline-flex; align-items: center; text-decoration: none;">
+                    <i class="fas fa-times"></i>
+                    Отмена
+                </a>
+            </div>
         </form>
     </div>
 </div>

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${article.article.title}">Статья</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/styles/article.css}">
     <link rel="stylesheet" th:href="@{/styles/common.css}">
 </head>
@@ -11,7 +12,10 @@
 
 <nav class="navbar">
     <div class="nav-container">
-        <a th:href="@{/}" class="logo">🔬 SciNet</a>
+        <a th:href="@{/}" class="logo">
+            <i class="fas fa-flask-vial"></i>
+            SciNet
+        </a>
         <div class="nav-links">
             <a th:href="@{/}" class="nav-link">Главная</a>
             <div sec:authorize="isAuthenticated()">
@@ -31,17 +35,18 @@
 
         <div class="article-meta">
             <div class="author-info">
-                <span>Автор: </span>
+                <strong>Автор:</strong>
                 <a th:href="@{/user(id=${article.article.authorId})}"
                    th:text="${article.article.author}">Автор</a>
             </div>
             <div class="publication-info">
+                <strong>Журнал:</strong>
                 <span th:text="${article.article.journal}">Журнал</span>
-                <span th:if="${article.article.year}" th:text="', ' + ${article.article.year}">2023</span>
-                <span th:if="${article.article.pages}" th:text="', стр. ' + ${article.article.pages}">стр. 1-10</span>
+                <span th:if="${article.article.year}" th:text="${', ' + article.article.year}">2023</span>
+                <span th:if="${article.article.pages}" th:text="${', стр. ' + article.article.pages}">стр. 1-10</span>
             </div>
             <div class="published-date" th:if="${article.article.published}">
-                <span>Опубликовано: </span>
+                <strong>Опубликовано:</strong>
                 <span th:text="${#temporals.format(article.article.published, 'dd.MM.yyyy HH:mm')}">01.01.2023 12:00</span>
             </div>
         </div>
@@ -50,33 +55,41 @@
             <button class="action-btn like-btn"
                     th:attr="data-article-id=${article.article.id}"
                     th:classappend="${article.likedByCurrentUser} ? 'liked' : ''">
-                <span class="icon">♥</span>
+                <i class="fas fa-heart"></i>
                 <span class="count" th:text="${article.likeCount}">0</span>
-                <span class="text">Нравится</span>
             </button>
         </div>
 
         <div class="article-manage" th:if="${isAuthenticated and currentUserId == article.article.authorId}">
-            <button id="show-pdf-upload" class="btn-secondary">📄 Загрузить контент из PDF</button>
+            <button id="show-pdf-upload" class="btn-secondary">
+                <i class="fas fa-file-pdf"></i>
+                Загрузить контент из PDF
+            </button>
 
             <form th:action="@{/article/{id}/delete(id=${article.article.id})}"
                   method="post"
                   style="display: inline;">
                 <button type="submit" class="btn-danger"
                         onclick="return confirm('Вы уверены? Это действие необратимо!');">
-                    🗑️ Удалить статью
+                    <i class="fas fa-trash-2"></i>
+                    Удалить статью
                 </button>
             </form>
 
-            <div id="pdf-upload-modal" class="modal" style="display: none;">
+            <div id="pdf-upload-modal" class="modal">
                 <div class="modal-content">
-                    <span class="close">&times;</span>
+                    <button class="close">&times;</button>
                     <h3>Загрузить контент из PDF</h3>
                     <form th:action="@{/article/{id}/upload-pdf(id=${article.article.id})}"
                           method="post"
                           enctype="multipart/form-data">
-                        <input type="file" name="file" accept=".pdf" required>
-                        <button type="submit" class="btn-primary">Загрузить</button>
+                        <div class="form-group">
+                            <input type="file" name="file" accept=".pdf" required>
+                        </div>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-upload"></i>
+                            Загрузить
+                        </button>
                     </form>
                 </div>
             </div>
@@ -90,13 +103,16 @@
     </div>
 
     <div class="comments-section">
-        <h3>Комментарии (<span th:text="${article.comments.size()}">0</span>)</h3>
+        <h3><i class="fas fa-comments"></i> Комментарии (<span th:text="${article.comments.size()}">0</span>)</h3>
 
         <div class="comment-form" th:if="${isAuthenticated}">
             <form id="add-comment-form" method="post">
                 <input type="hidden" name="articleId" th:value="${article.article.id}">
                 <textarea name="text" placeholder="Напишите комментарий..." rows="3" required></textarea>
-                <button type="submit" class="btn-primary">Отправить</button>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-paper-plane"></i>
+                    Отправить
+                </button>
             </form>
         </div>
 

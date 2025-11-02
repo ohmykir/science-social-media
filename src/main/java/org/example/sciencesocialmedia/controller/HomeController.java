@@ -2,14 +2,12 @@ package org.example.sciencesocialmedia.controller;
 
 import lombok.AllArgsConstructor;
 import org.example.sciencesocialmedia.dto.ArticleViewDTO;
-import org.example.sciencesocialmedia.entity.Article;
 import org.example.sciencesocialmedia.entity.User;
 import org.example.sciencesocialmedia.service.ArticleService;
 import org.example.sciencesocialmedia.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
 import java.util.List;

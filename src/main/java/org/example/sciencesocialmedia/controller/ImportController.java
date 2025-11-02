@@ -3,10 +3,7 @@ package org.example.sciencesocialmedia.controller;
 import lombok.AllArgsConstructor;
 import org.example.sciencesocialmedia.dto.ImportBibtexResponse;
 import org.example.sciencesocialmedia.service.ArticleImportService;
-import org.example.sciencesocialmedia.service.ArticleService;
 import org.example.sciencesocialmedia.service.UserService;
-import org.jbibtex.ParseException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
 import java.security.Principal;
 
 @Controller
@@ -29,8 +25,7 @@ public class ImportController {
     public String importBibtex(@RequestParam MultipartFile file,
                                                Principal principal,
                                                RedirectAttributes redirectAttributes)
-            throws IOException, ParseException, java.text.ParseException {
-
+    {
         try {
             if (file.isEmpty()) {
                 redirectAttributes.addFlashAttribute("error", "Файл пустой");

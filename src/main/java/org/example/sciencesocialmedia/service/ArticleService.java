@@ -1,7 +1,6 @@
 package org.example.sciencesocialmedia.service;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.AllArgsConstructor;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -10,17 +9,11 @@ import org.example.sciencesocialmedia.dto.ArticleViewDTO;
 import org.example.sciencesocialmedia.dto.CommentDTO;
 import org.example.sciencesocialmedia.entity.Article;
 import org.example.sciencesocialmedia.entity.Comment;
-import org.example.sciencesocialmedia.entity.Like;
 import org.example.sciencesocialmedia.entity.User;
-import org.example.sciencesocialmedia.entity.id.LikeId;
 import org.example.sciencesocialmedia.repository.ArticleRepository;
 import org.example.sciencesocialmedia.repository.CommentRepository;
 import org.example.sciencesocialmedia.repository.LikeRepository;
 import org.example.sciencesocialmedia.repository.UserRepository;
-import org.jbibtex.BibTeXDatabase;
-import org.jbibtex.BibTeXEntry;
-import org.jbibtex.BibTeXParser;
-import org.jbibtex.ParseException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -28,17 +21,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.security.Principal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 @Service
 @AllArgsConstructor

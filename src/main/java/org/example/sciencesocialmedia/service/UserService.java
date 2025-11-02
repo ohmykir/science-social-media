@@ -10,7 +10,6 @@ import org.example.sciencesocialmedia.exception.UserNotFoundException;
 import org.example.sciencesocialmedia.repository.ArticleRepository;
 import org.example.sciencesocialmedia.repository.SubscriptionRepository;
 import org.example.sciencesocialmedia.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,9 +27,6 @@ public class UserService implements UserDetailsService {
     private final SubscriptionRepository subscriptionRepository;
     private final ArticleRepository articleRepository;
     private final ArticleService articleService;
-
-    //@Value("${app.upload-dir:uploads/profile-photos/}")
-    //private String uploadDir;
 
     @Override
     public User loadUserByUsername(String username) throws UserNotFoundException {

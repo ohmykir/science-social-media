@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 `).join('');
                 }
-                usersModal.style.display = 'block';
+                usersModal.classList.add('show');
             })
             .catch(error => {
                 console.error('Error loading users:', error);
@@ -61,30 +61,33 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
-    if (usersModal) {
-        const closeBtn = usersModal.querySelector('.close');
-        if (closeBtn) {
-            closeBtn.addEventListener('click', () => {
-                usersModal.style.display = 'none';
-            });
-        }
+    // Универсальное закрытие всех модалей по крестику
+    document.querySelectorAll('.close').forEach(closeBtn => {
+        closeBtn.addEventListener('click', function() {
+            this.closest('.modal').classList.remove('show');
+        });
+    });
 
-        window.addEventListener('click', function(event) {
-            if (event.target == usersModal) {
-                usersModal.style.display = 'none';
+    // Закрытие по клику на фон
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('show');
             }
         });
-    }
+    });
 
+    // Открытие окна добавления статей
     if (showUploadFormBtn) {
         showUploadFormBtn.addEventListener('click', function() {
-            uploadFormContainer.style.display = 'block';
+            uploadFormContainer.classList.add('show');
         });
     }
 
+    // Закрытие окна добавления статей по кнопке
     if (closeUploadFormBtn) {
         closeUploadFormBtn.addEventListener('click', function() {
-            uploadFormContainer.style.display = 'none';
+            uploadFormContainer.classList.remove('show');
         });
     }
 
@@ -131,13 +134,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (listViewBtn && gridViewBtn) {
         listViewBtn.addEventListener('click', function() {
-            articlesContainer.classList.remove('grid');
+            articlesContainer.classList.remove('grid-view');
             listViewBtn.classList.add('active');
             gridViewBtn.classList.remove('active');
         });
 
         gridViewBtn.addEventListener('click', function() {
-            articlesContainer.classList.add('grid');
+            articlesContainer.classList.add('grid-view');
             gridViewBtn.classList.add('active');
             listViewBtn.classList.remove('active');
         });

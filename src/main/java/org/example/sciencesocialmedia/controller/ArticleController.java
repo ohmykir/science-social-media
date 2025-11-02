@@ -1,14 +1,9 @@
 package org.example.sciencesocialmedia.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.example.sciencesocialmedia.dto.ArticleDetailDTO;
-import org.example.sciencesocialmedia.entity.Article;
-import org.example.sciencesocialmedia.entity.Comment;
 import org.example.sciencesocialmedia.entity.User;
 import org.example.sciencesocialmedia.service.ArticleService;
-import org.example.sciencesocialmedia.service.CommentService;
-import org.example.sciencesocialmedia.service.LikeService;
 import org.example.sciencesocialmedia.service.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -20,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
-import java.util.List;
 
 @Controller
 @AllArgsConstructor

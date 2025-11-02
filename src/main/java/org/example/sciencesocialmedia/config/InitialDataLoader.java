@@ -16,11 +16,9 @@ import java.util.Set;
 public class InitialDataLoader implements ApplicationRunner {
 
     UserService userService;
-    ArticleService articleService;
-
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         User user = new User();
 
         user.setUsername("testuser");

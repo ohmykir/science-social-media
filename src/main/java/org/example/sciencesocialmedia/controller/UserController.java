@@ -3,10 +3,7 @@ package org.example.sciencesocialmedia.controller;
 import lombok.AllArgsConstructor;
 import org.example.sciencesocialmedia.dto.UserProfileDTO;
 import org.example.sciencesocialmedia.dto.UserUpdateDTO;
-import org.example.sciencesocialmedia.entity.Article;
-import org.example.sciencesocialmedia.entity.Subscription;
 import org.example.sciencesocialmedia.entity.User;
-import org.example.sciencesocialmedia.service.ArticleService;
 import org.example.sciencesocialmedia.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,7 +14,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
-import java.util.UUID;
 
 @Controller
 @RequestMapping

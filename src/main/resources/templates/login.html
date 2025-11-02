@@ -1,28 +1,40 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
 <head>
-    <title>Вход</title>
-    <link rel="stylesheet" href="/styles/login.css" type="text/css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход - SciNet</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/styles/common.css" type="text/css">
+    <link rel="stylesheet" href="/styles/login-registration.css" type="text/css">
 </head>
 <body>
 <div class="login-container">
-    <h1>Вход</h1>
+    <div style="text-align: center; margin-bottom: 28px;">
+        <i class="fas fa-flask-vial" style="font-size: 40px; color: #1e40af; margin-bottom: 12px; display: block;"></i>
+        <h1>SciNet</h1>
+        <p style="color: var(--gray-500); margin-top: 8px;">Научная социальная сеть</p>
+    </div>
 
     <div th:if="${param.error}" class="alert alert-error">
+        <i class="fas fa-exclamation-circle"></i>
         Неверный логин и/или пароль
     </div>
 
     <div th:if="${param.logout}" class="alert alert-success">
+        <i class="fas fa-check-circle"></i>
         Выполнен выход
     </div>
 
     <form th:action="@{/login}" method="post">
         <div class="form-group">
-            <input type="text" name="username" placeholder="Логин" required>
+            <label for="username">Логин</label>
+            <input type="text" id="username" name="username" placeholder="Введите логин" required>
         </div>
 
         <div class="form-group">
-            <input type="password" name="password" placeholder="Пароль" required>
+            <label for="password">Пароль</label>
+            <input type="password" id="password" name="password" placeholder="Введите пароль" required>
         </div>
 
         <input type="submit" value="Войти">

@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${userProfile.user.firstName + ' ' + userProfile.user.lastName + ' - Профиль'}">Профиль пользователя</title>
+    <title th:text="${userProfile.user.firstName + ' ' + userProfile.user.lastName + ' - SciNet'}">Профиль пользователя</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/styles/user-profile.css}">
     <link rel="stylesheet" th:href="@{/styles/common.css}">
 </head>
@@ -11,7 +12,10 @@
 
 <nav class="navbar">
     <div class="nav-container">
-        <a th:href="@{/}" class="logo">🔬 SciNet</a>
+        <a th:href="@{/}" class="logo">
+            <i class="fas fa-flask-vial"></i>
+            SciNet
+        </a>
         <div class="nav-links">
             <a th:href="@{/}" class="nav-link">Главная</a>
             <div sec:authorize="isAuthenticated()">
@@ -39,43 +43,68 @@
             <h1 class="username" th:text="${userProfile.user.username}">username</h1>
             <h2 class="full-name" th:text="${userProfile.user.firstName + ' ' + userProfile.user.lastName}">Имя Фамилия</h2>
             <p class="bio" th:text="${userProfile.user.bio}">Биография пользователя</p>
-        </div>
 
-        <div class="profile-actions">
-            <button th:if="${isOwner}" id="show-upload-form" class="btn-primary">+ Добавить статью</button>
-            <a th:if="${isOwner}" th:href="@{/user/edit}" class="btn-secondary">✏️ Редактировать профиль</a>
-            <button th:unless="${isOwner}" class="subscribe-btn"
-                    th:attr="data-user-id=${userProfile.user.id}"
-                    th:text="${userProfile.subscribed} ? 'Отписаться' : 'Подписаться'"></button>
+            <div class="profile-actions">
+                <button th:if="${isOwner}" id="show-upload-form" class="btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Добавить статью
+                </button>
+                <a th:if="${isOwner}" th:href="@{/user/edit}" class="btn-secondary">
+                    <i class="fas fa-edit"></i>
+                    Редактировать профиль
+                </a>
+                <button th:unless="${isOwner}" class="subscribe-btn"
+                        th:attr="data-user-id=${userProfile.user.id}"
+                        th:text="${userProfile.isSubscribed()} ? 'Отписаться' : 'Подписаться'">
+                </button>
+            </div>
         </div>
     </div>
 
-    <div th:if="${isOwner}" id="upload-form-container" class="upload-container" style="display: none;">
-        <div class="upload-form-wrapper">
-            <button id="close-upload-form" class="close-btn">&times;</button>
-            <h3>Загрузка статей из BibTeX</h3>
+    <div th:if="${isOwner}" id="upload-form-container" class="modal">
+        <div class="modal-content">
+            <button class="close">&times;</button>
+            <h3>
+                <i class="fas fa-file-import"></i>
+                Загрузка статей из BibTeX
+            </h3>
             <form th:action="@{/import/bibtex}" method="post" enctype="multipart/form-data" id="bibtex-upload-form">
                 <div class="form-group">
                     <label for="file">Выберите BibTeX файл:</label>
                     <input type="file" id="file" name="file" accept=".bib" required>
                 </div>
-                <button type="submit" class="btn-primary">Загрузить</button>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-upload"></i>
+                    Загрузить
+                </button>
             </form>
             <div id="upload-status" class="upload-status"></div>
         </div>
     </div>
 
+
     <!-- Flash messages -->
-    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${success}" class="alert alert-success">
+        <i class="fas fa-check-circle"></i>
+        <span th:text="${success}"></span>
+    </div>
     <div th:if="${warnings}" class="alert alert-warning">
+        <i class="fas fa-exclamation-triangle"></i>
         <div th:each="warning : ${warnings}" th:text="${warning}"></div>
     </div>
-    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+    <div th:if="${error}" class="alert alert-error">
+        <i class="fas fa-times-circle"></i>
+        <span th:text="${error}"></span>
+    </div>
 
     <div class="content-wrapper">
         <div class="articles-section">
             <div class="articles-header">
-                <h3>Статьи <span class="articles-count" th:text="'(' + ${userProfile.articles.size()} + ')'">0</span></h3>
+                <h3>
+                    <i class="fas fa-book"></i>
+                    Статьи
+                    <span class="articles-count" th:text="'(' + ${userProfile.articles.size()} + ')'">0</span>
+                </h3>
                 <select id="sort-selector" class="sort-select">
                     <option value="date" th:selected="${currentSort == 'date'}">По дате</option>
                     <option value="title" th:selected="${currentSort == 'title'}">По названию</option>
@@ -99,11 +128,11 @@
                     </div>
                     <div class="article-actions">
                         <div class="action-item">
-                            <span class="icon like-icon">♥</span>
+                            <i class="fas fa-heart like-icon"></i>
                             <span class="count" th:text="${article.likeCount}">0</span>
                         </div>
                         <div class="action-item">
-                            <span class="icon comment-icon">💬</span>
+                            <i class="fas fa-comments comment-icon"></i>
                             <span class="count" th:text="${article.commentCount}">0</span>
                         </div>
                     </div>
@@ -111,14 +140,20 @@
             </div>
 
             <div class="view-toggle">
-                <button id="list-view" class="view-btn active">Список</button>
-                <button id="grid-view" class="view-btn">Плитки</button>
+                <button id="list-view" class="view-btn active">
+                    <i class="fas fa-list"></i>
+                    Список
+                </button>
+                <button id="grid-view" class="view-btn">
+                    <i class="fas fa-th"></i>
+                    Плитки
+                </button>
             </div>
         </div>
 
         <div class="sidebar">
             <div class="stats-card">
-                <h4>Статистика</h4>
+                <h4><i class="fas fa-chart-bar"></i> Статистика</h4>
                 <div class="stat-item clickable" id="show-subscribers">
                     <span class="stat-label">Подписчиков:</span>
                     <span class="stat-value" th:text="${userProfile.subscriberCount}">0</span>
@@ -130,9 +165,9 @@
             </div>
 
             <!-- Modal для списка -->
-            <div id="users-modal" class="modal" style="display: none;">
+            <div id="users-modal" class="modal">
                 <div class="modal-content">
-                    <span class="close">&times;</span>
+                    <button class="close">&times;</button>
                     <h3 id="modal-title"></h3>
                     <div id="users-list"></div>
                 </div>

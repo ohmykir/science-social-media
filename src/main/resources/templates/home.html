@@ -3,14 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Главная - Научная социальная сеть</title>
+    <title>Главная - SciNet</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/styles/home.css}">
     <link rel="stylesheet" th:href="@{/styles/common.css}">
 </head>
 <body>
 <nav class="navbar">
     <div class="nav-container">
-        <a th:href="@{/}" class="logo">🔬 SciNet</a>
+        <a th:href="@{/}" class="logo">
+            <i class="fas fa-flask-vial"></i>
+            SciNet
+        </a>
         <div class="nav-links">
             <a th:href="@{/}" class="nav-link">Главная</a>
             <div sec:authorize="isAuthenticated()">
@@ -31,7 +35,7 @@
     </div>
 
     <section class="top-section">
-        <h2>🔥 Самые популярные статьи</h2>
+        <h2><i class="fas fa-fire"></i> Самые популярные статьи</h2>
         <div class="articles-grid">
             <div class="article-card" th:each="dto : ${topLikedArticles}">
                 <h3 class="article-card-title">
@@ -42,21 +46,21 @@
                     <span class="article-journal" th:if="${dto.article.journal}" th:text="', ' + ${dto.article.journal}">Журнал</span>
                 </div>
                 <div class="article-card-stats">
-          <span class="stat-item">
-            <span class="icon">♥</span>
-            <span th:text="${dto.likeCount}">0</span>
-          </span>
                     <span class="stat-item">
-            <span class="icon">💬</span>
-            <span th:text="${dto.commentCount}">0</span>
-          </span>
+                        <i class="fas fa-heart"></i>
+                        <span th:text="${dto.likeCount}">0</span>
+                    </span>
+                    <span class="stat-item">
+                        <i class="fas fa-comments"></i>
+                        <span th:text="${dto.commentCount}">0</span>
+                    </span>
                 </div>
             </div>
         </div>
     </section>
 
     <section class="top-section">
-        <h2>💬 Самые обсуждаемые статьи</h2>
+        <h2><i class="fas fa-comments"></i> Самые обсуждаемые статьи</h2>
         <div class="articles-grid">
             <div class="article-card" th:each="dto : ${topCommentedArticles}">
                 <h3 class="article-card-title">
@@ -67,14 +71,14 @@
                     <span class="article-journal" th:if="${dto.article.journal}" th:text="', ' + ${dto.article.journal}">Журнал</span>
                 </div>
                 <div class="article-card-stats">
-          <span class="stat-item">
-            <span class="icon">♥</span>
-            <span th:text="${dto.likeCount}">0</span>
-          </span>
                     <span class="stat-item">
-            <span class="icon">💬</span>
-            <span th:text="${dto.commentCount}">0</span>
-          </span>
+                        <i class="fas fa-heart"></i>
+                        <span th:text="${dto.likeCount}">0</span>
+                    </span>
+                    <span class="stat-item">
+                        <i class="fas fa-comments"></i>
+                        <span th:text="${dto.commentCount}">0</span>
+                    </span>
                 </div>
             </div>
         </div>
