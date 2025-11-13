@@ -68,19 +68,50 @@
                 <i class="fas fa-file-import"></i>
                 Загрузка статей из BibTeX
             </h3>
-            <form th:action="@{/import/bibtex}" method="post" enctype="multipart/form-data" id="bibtex-upload-form">
-                <div class="form-group">
-                    <label for="file">Выберите BibTeX файл:</label>
-                    <input type="file" id="file" name="file" accept=".bib" required>
-                </div>
-                <button type="submit" class="btn-primary">
-                    <i class="fas fa-upload"></i>
-                    Загрузить
+
+            <div class="import-tabs">
+                <button class="import-tab-btn active" onclick="switchImportTab('file-tab')">
+                    <i class="fas fa-file-upload"></i>
+                    Загрузить файл
                 </button>
-            </form>
-            <div id="upload-status" class="upload-status"></div>
+                <button class="import-tab-btn" onclick="switchImportTab('text-tab')">
+                    <i class="fas fa-keyboard"></i>
+                    Вставить текст
+                </button>
+            </div>
+
+            <div id="file-tab" class="import-tab-content active">
+                <form th:action="@{/import/bibtex}" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="file">Выберите файл (.txt, .bib, .bibtex):</label>
+                        <input type="file" id="file" name="file" accept=".txt,.bib,.bibtex" required>
+                        <small>Поддерживаются файлы с BibTeX структурой</small>
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-upload"></i>
+                        Загрузить файл
+                    </button>
+                </form>
+            </div>
+
+            <div id="text-tab" class="import-tab-content">
+                <form th:action="@{/import/bibtex-text}" method="post">
+                    <div class="form-group">
+                        <label for="bibtex-text">Вставьте BibTeX текст:</label>
+                        <textarea id="bibtex-text" name="bibtexContent"
+                                  placeholder="@article{key2023,&#10;  title={Название},&#10;  author={Автор},&#10;  journal={Журнал},&#10;  year={2023}&#10;}"
+                                  rows="8" required></textarea>
+                        <small>Вставьте один или несколько BibTeX записей</small>
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-check"></i>
+                        Импортировать текст
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
+
 
 
     <div th:if="${success}" class="alert alert-success">

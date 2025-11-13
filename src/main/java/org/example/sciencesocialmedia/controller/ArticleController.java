@@ -1,8 +1,11 @@
 package org.example.sciencesocialmedia.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.example.sciencesocialmedia.dto.ArticleDetailDTO;
+import org.example.sciencesocialmedia.entity.Article;
 import org.example.sciencesocialmedia.entity.User;
+import org.example.sciencesocialmedia.repository.ArticleRepository;
 import org.example.sciencesocialmedia.service.ArticleService;
 import org.example.sciencesocialmedia.service.UserService;
 import org.springframework.security.core.Authentication;
@@ -15,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.Map;
 
 @Controller
 @AllArgsConstructor
@@ -23,6 +27,7 @@ public class ArticleController {
 
     private final ArticleService articleService;
     private final UserService userService;
+    private final ArticleRepository articleRepository;
 
     @GetMapping("/article")
     public String getArticle(@RequestParam String id, Model model, Principal principal) {
@@ -39,6 +44,19 @@ public class ArticleController {
         model.addAttribute("currentUserId", current.getId());
         return "article";
     }
+
+    @GetMapping("/api/articles/{id}/pdf-data")
+    @ResponseBody
+    public Map<String, String> getPdfData(@PathVariable String id) {
+        Article article = articleRepository.findById(id)
+                .orElseThrow(EntityNotFoundException::new);
+
+        return Map.of(
+                "pdfBase64", article.getPdfBase64() != null ? article.getPdfBase64() : "",
+                "title", article.getTitle()
+        );
+    }
+
 
     @PostMapping("/article/{id}/upload-pdf")
     public String uploadPdfContent(@PathVariable String id,

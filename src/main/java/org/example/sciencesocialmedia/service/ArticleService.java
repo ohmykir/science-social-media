@@ -2,8 +2,6 @@ package org.example.sciencesocialmedia.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
 import org.example.sciencesocialmedia.dto.ArticleDetailDTO;
 import org.example.sciencesocialmedia.dto.ArticleViewDTO;
 import org.example.sciencesocialmedia.dto.CommentDTO;
@@ -21,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -164,27 +163,10 @@ public class ArticleService {
             throw new RuntimeException();
         }
 
-        String pdfContent = extractTextFromPdf(file);
-        article.setContent(pdfContent);
+        byte[] pdfBytes = file.getBytes();
+        String base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
+        article.setPdfBase64(base64Pdf);
         articleRepository.save(article);
-    }
-
-    private String extractTextFromPdf(MultipartFile file) throws IOException {
-        try (PDDocument document = PDDocument.load(file.getInputStream())) {
-            PDFTextStripper stripper = new PDFTextStripper();
-            stripper.setSortByPosition(true);
-
-            String text = stripper.getText(document);
-
-            text = text.replace("\r\n", "\n").replace("\r", "\n");
-
-            StringBuilder html = new StringBuilder();
-            html.append("<pre>");
-            html.append(text);
-            html.append("</pre>");
-
-            return html.toString();
-        }
     }
 
     private Map<String, Integer> getLikeCounts(List<String> articleIds) {

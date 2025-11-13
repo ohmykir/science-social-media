@@ -31,4 +31,7 @@ public class Article {
     @Column(columnDefinition = "TEXT")
     private String content;
 
+    @Column(columnDefinition = "LONGTEXT")
+    private String pdfBase64;
+
 }

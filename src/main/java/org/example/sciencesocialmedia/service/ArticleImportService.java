@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringReader;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -29,42 +30,62 @@ public class ArticleImportService {
     private static final int BATCH_SIZE = 50;
 
     public ImportBibtexResponse importArticlesFromBibtex(MultipartFile file, Principal principal) throws IOException {
-
         User user = userRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        try (Reader reader = new InputStreamReader(file.getInputStream())) {
+            return parseBibtexFromReader(reader, user.getId());
+        } catch (org.jbibtex.ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ImportBibtexResponse importArticlesFromText(String bibtexContent, Principal principal) {
+        User user = userRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (bibtexContent == null || bibtexContent.trim().isEmpty()) {
+            throw new IllegalArgumentException("Содержимое не может быть пустым");
+        }
+
+        try (Reader reader = new StringReader(bibtexContent)) {
+            return parseBibtexFromReader(reader, user.getId());
+        } catch (org.jbibtex.ParseException e) {
+            throw new RuntimeException("Ошибка парсинга BibTeX: " + e.getMessage());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private ImportBibtexResponse parseBibtexFromReader(Reader reader, String userId) throws org.jbibtex.ParseException {
         List<String> errors = new ArrayList<>();
         int successCount = 0;
         int failedCount = 0;
 
-        try (Reader reader = new InputStreamReader(file.getInputStream())) {
-            BibTeXParser parser = new BibTeXParser();
-            BibTeXDatabase database = parser.parse(reader);
+        BibTeXParser parser = new BibTeXParser();
+        BibTeXDatabase database = parser.parse(reader);
 
-            List<Article> articles = new ArrayList<>();
+        List<Article> articles = new ArrayList<>();
 
-            for (BibTeXEntry entry : database.getEntries().values()) {
-                try {
-                    Article article = parseArticleFromEntry(entry, user.getId());
-                    articles.add(article);
-                    successCount++;
+        for (BibTeXEntry entry : database.getEntries().values()) {
+            try {
+                Article article = parseArticleFromEntry(entry, userId);
+                articles.add(article);
+                successCount++;
 
-                    if (articles.size() >= BATCH_SIZE) {
-                        articleRepository.saveAll(articles);
-                        articles.clear();
-                    }
-                } catch (Exception e) {
-                    failedCount++;
-                    String errorMsg = String.format("Entry '%s': %s", entry.getKey(), e.getMessage());
-                    errors.add(errorMsg);
+                if (articles.size() >= BATCH_SIZE) {
+                    articleRepository.saveAll(articles);
+                    articles.clear();
                 }
+            } catch (Exception e) {
+                failedCount++;
+                String errorMsg = String.format("Entry '%s': %s", entry.getKey(), e.getMessage());
+                errors.add(errorMsg);
             }
+        }
 
-            if (!articles.isEmpty()) {
-                articleRepository.saveAll(articles);
-            }
-        } catch (org.jbibtex.ParseException e) {
-            throw new RuntimeException(e);
+        if (!articles.isEmpty()) {
+            articleRepository.saveAll(articles);
         }
 
         return new ImportBibtexResponse(successCount, failedCount, errors);

@@ -23,21 +23,47 @@ public class ImportController {
 
     @PostMapping("/bibtex")
     public String importBibtex(@RequestParam MultipartFile file,
-                                               Principal principal,
-                                               RedirectAttributes redirectAttributes)
-    {
+                               Principal principal,
+                               RedirectAttributes redirectAttributes) {
         try {
             if (file.isEmpty()) {
                 redirectAttributes.addFlashAttribute("error", "Файл пустой");
-                return "redirct:/user?id=" + userService.loadUserByUsername(principal.getName()).getId();
+                return "redirect:/user?id=" + userService.loadUserByUsername(principal.getName()).getId();
             }
 
-            if (!file.getOriginalFilename().endsWith(".txt")) {
-                redirectAttributes.addFlashAttribute("error", "Поддерживаются только .txt файлы");
+            String filename = file.getOriginalFilename();
+            if (!filename.endsWith(".txt") && !filename.endsWith(".bibtex") && !filename.endsWith(".bib")) {
+                redirectAttributes.addFlashAttribute("error", "Поддерживаются только .txt, .bibtex и .bib файлы");
                 return "redirect:/user?id=" + userService.loadUserByUsername(principal.getName()).getId();
             }
 
             ImportBibtexResponse response = articleImportService.importArticlesFromBibtex(file, principal);
+
+            redirectAttributes.addFlashAttribute("success",
+                    String.format("Успешно импортировано %d статей", response.getSuccessCount()));
+
+            if (!response.getErrors().isEmpty()) {
+                redirectAttributes.addFlashAttribute("warnings", response.getErrors());
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Ошибка импорта: " + e.getMessage());
+        }
+
+        String userId = userService.loadUserByUsername(principal.getName()).getId();
+        return "redirect:/user?id=" + userId;
+    }
+
+    @PostMapping("/bibtex-text")
+    public String importBibtexFromText(@RequestParam String bibtexContent,
+                                       Principal principal,
+                                       RedirectAttributes redirectAttributes) {
+        try {
+            if (bibtexContent == null || bibtexContent.trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Пожалуйста, введите BibTeX текст");
+                return "redirect:/user?id=" + userService.loadUserByUsername(principal.getName()).getId();
+            }
+
+            ImportBibtexResponse response = articleImportService.importArticlesFromText(bibtexContent, principal);
 
             redirectAttributes.addFlashAttribute("success",
                     String.format("Успешно импортировано %d статей", response.getSuccessCount()));

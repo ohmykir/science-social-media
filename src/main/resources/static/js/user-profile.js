@@ -141,4 +141,21 @@ document.addEventListener('DOMContentLoaded', function() {
             listViewBtn.classList.remove('active');
         });
     }
+
+
 });
+function switchImportTab(tabId) {
+    document.querySelectorAll('.import-tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    document.querySelectorAll('.import-tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+
+    const selectedTab = document.getElementById(tabId);
+    if (selectedTab) {
+        selectedTab.classList.add('active');
+    }
+
+    event.target.classList.add('active');
+}

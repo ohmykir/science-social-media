@@ -7,6 +7,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/styles/article.css}">
     <link rel="stylesheet" th:href="@{/styles/common.css}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    </script>
+
 </head>
 <body>
 
@@ -97,10 +102,30 @@
     </div>
 
     <div class="article-content">
-        <div class="content-text" th:utext="${article.article.content}">
+        <div id="pdfViewerContainer" class="pdf-viewer-container" th:if="${article.article.pdfBase64}">
+            <div class="pdf-controls">
+                <button onclick="previousPage()" class="btn-nav btn-sm" title="Предыдущая страница">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <span id="pageInfo">
+                Страница <span id="currentPage">1</span> из <span id="totalPages">0</span>
+            </span>
+                <input type="range" id="pageSlider" min="1" value="1" class="page-slider" onchange="goToPage(this.value)">
+                <button onclick="nextPage()" class="btn-nav btn-sm" title="Следующая страница">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <button onclick="downloadPdf()" class="btn-nav btn-sm" title="Скачать PDF">
+                    <i class="fas fa-download"></i>
+                </button>
+            </div>
+            <canvas id="pdfCanvas" class="pdf-canvas"></canvas>
+        </div>
+
+        <div class="content-text" th:utext="${article.article.content}" th:unless="${article.article.pdfBase64}">
             Содержание статьи будет здесь...
         </div>
     </div>
+
 
     <div class="comments-section">
         <h3><i class="fas fa-comments"></i> Комментарии (<span th:text="${article.comments.size()}">0</span>)</h3>
